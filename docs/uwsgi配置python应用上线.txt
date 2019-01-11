@@ -1,0 +1,26 @@
+uwsgi.ini
+[uwsgi]
+uid = nginx
+gid = nginx
+pidfile = /run/uwsgi/uwsgi.pid
+emperor = /etc/uwsgi.d
+stats = /run/uwsgi/stats.sock
+chmod-socket = 660
+emperor-tyrant = true
+cap = setgid,setuid
+socket=/run/uwsgi/uwsgi.sock
+module=imgStore
+callable=application
+chdir=/opt/imagesvc
+processes=15
+plugin=python,gevent
+------------------------------
+nginx.conf
+server{
+        listen       9001;
+        root    /opt/imagesvc;
+        location / {
+             include uwsgi_params;
+             uwsgi_pass unix:/run/uwsgi/uwsgi.sock;
+        }
+}
